@@ -1,0 +1,64 @@
+{
+  "name": "@tinyland-inc/tinyland-forms",
+  "version": "0.1.0",
+  "description": "Reusable Zod schemas, field validators, and SuperForms integration helpers for the Tinyland platform",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "zod",
+    "forms",
+    "validation",
+    "schemas",
+    "superforms",
+    "sveltekit"
+  ],
+  "author": "Tinyland.dev",
+  "license": "Zlib AND LicenseRef-Tinyland-Proprietary",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/tinyland/tinyland.dev",
+    "directory": "packages/tinyland-forms"
+  },
+  "dependencies": {
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@fast-check/vitest": "^0.2.4",
+    "@types/node": "^20.0.0",
+    "fast-check": "^4.3.0",
+    "typescript": "^5.0.0",
+    "vitest": "^4.0.0"
+  },
+  "peerDependencies": {
+    "sveltekit-superforms": "^2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "sveltekit-superforms": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
