@@ -1,5 +1,5 @@
 """
-BUILD.bazel for @tinyland-inc/tinyland-forms.
+BUILD.bazel for @tummycrypt/tinyland-forms.
 
 Dual-mode build: works with both pnpm (standalone) and Bazel (CI/production).
   Standalone: cd packages/tinyland-forms && pnpm build
@@ -54,7 +54,7 @@ npm_package(
         "package.json",
         ":tinyland_forms",
     ],
-    package = "@tinyland-inc/tinyland-forms",
+    package = "@tummycrypt/tinyland-forms",
     version = "0.1.0",
     visibility = ["//visibility:public"],
 )

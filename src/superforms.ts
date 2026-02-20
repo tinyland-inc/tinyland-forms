@@ -7,7 +7,7 @@
  *
  * Usage:
  * ```typescript
- * import { superForm, superValidate, zod4 } from '@tinyland-inc/tinyland-forms/superforms';
+ * import { superForm, superValidate, zod4 } from '@tummycrypt/tinyland-forms/superforms';
  *
  * // Server-side validation
  * const form = await superValidate(request, zod4(mySchema));

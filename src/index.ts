@@ -1,5 +1,5 @@
 /**
- * @tinyland-inc/tinyland-forms
+ * @tummycrypt/tinyland-forms
  *
  * Reusable Zod schemas, field validators, and form helper utilities
  * for the Tinyland platform. Compatible with sveltekit-superforms + zod4.
@@ -10,7 +10,7 @@
  *   emailSchema, slugSchema, handleSchema,
  *   paginationSchema, authorReferenceSchema,
  *   slugify, validatePasswordStrength
- * } from '@tinyland-inc/tinyland-forms';
+ * } from '@tummycrypt/tinyland-forms';
  *
  * // Compose schemas
  * const myFormSchema = z.object({
@@ -26,10 +26,10 @@
  *
  * For SuperForms integration, import from the superforms submodule:
  * ```typescript
- * import { superForm, superValidate, zod4 } from '@tinyland-inc/tinyland-forms/superforms';
+ * import { superForm, superValidate, zod4 } from '@tummycrypt/tinyland-forms/superforms';
  * ```
  *
- * @module @tinyland-inc/tinyland-forms
+ * @module @tummycrypt/tinyland-forms
  */
 
 // ============================================================================

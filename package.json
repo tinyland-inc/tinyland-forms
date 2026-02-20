@@ -1,5 +1,5 @@
 {
-  "name": "@tinyland-inc/tinyland-forms",
+  "name": "@tummycrypt/tinyland-forms",
   "version": "0.1.0",
   "description": "Reusable Zod schemas, field validators, and SuperForms integration helpers for the Tinyland platform",
   "type": "module",
@@ -60,5 +60,9 @@
   },
   "engines": {
     "node": ">=22.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }
