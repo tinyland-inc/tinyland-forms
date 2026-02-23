@@ -1,18 +1,18 @@
-/**
- * Composite Schema Tests + Property-Based Testing
- *
- * Tests for:
- *   - contentVisibilitySchema
- *   - publishingStatusSchema
- *   - authorReferenceSchema / authorFieldSchema
- *   - paginationSchema / paginatedResponseSchema
- *   - dateRangeSchema
- *   - searchQuerySchema
- *   - socialLinksSchema
- *   - contactSchema
- *   - toggleStatusSchema / deleteActionSchema
- *   - PBT: valid inputs always pass, invalid inputs always fail
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import { describe, it, expect } from 'vitest';
 import { test as fcTest } from '@fast-check/vitest';
@@ -39,9 +39,9 @@ import {
   deleteActionSchema,
 } from '../src/schemas.js';
 
-// ============================================================================
-// Arbitraries for PBT
-// ============================================================================
+
+
+
 
 const visibilityArb = fc.constantFrom(...CONTENT_VISIBILITY_VALUES);
 const statusArb = fc.constantFrom(...PUBLISHING_STATUSES);
@@ -59,9 +59,9 @@ const validPaginationArb = fc.record({
   sortOrder: fc.constantFrom('asc' as const, 'desc' as const),
 });
 
-// ============================================================================
-// contentVisibilitySchema Tests
-// ============================================================================
+
+
+
 
 describe('contentVisibilitySchema', () => {
   it('accepts all valid visibility values', () => {
@@ -88,9 +88,9 @@ describe('contentVisibilitySchema', () => {
   );
 });
 
-// ============================================================================
-// publishingStatusSchema Tests
-// ============================================================================
+
+
+
 
 describe('publishingStatusSchema', () => {
   it('accepts all valid statuses', () => {
@@ -108,9 +108,9 @@ describe('publishingStatusSchema', () => {
   });
 });
 
-// ============================================================================
-// scheduledPublishingSchema Tests
-// ============================================================================
+
+
+
 
 describe('scheduledPublishingSchema', () => {
   it('accepts valid scheduled publishing config', () => {
@@ -129,9 +129,9 @@ describe('scheduledPublishingSchema', () => {
   });
 });
 
-// ============================================================================
-// contentVersionSchema Tests
-// ============================================================================
+
+
+
 
 describe('contentVersionSchema', () => {
   it('accepts valid version entry', () => {
@@ -155,9 +155,9 @@ describe('contentVersionSchema', () => {
   });
 });
 
-// ============================================================================
-// publishingMetadataSchema Tests
-// ============================================================================
+
+
+
 
 describe('publishingMetadataSchema', () => {
   it('accepts minimal publishing metadata', () => {
@@ -188,9 +188,9 @@ describe('publishingMetadataSchema', () => {
   });
 });
 
-// ============================================================================
-// authorReferenceSchema Tests
-// ============================================================================
+
+
+
 
 describe('authorReferenceSchema', () => {
   it('accepts valid author references', () => {
@@ -231,9 +231,9 @@ describe('authorReferenceSchema', () => {
   });
 });
 
-// ============================================================================
-// authorFieldSchema Tests
-// ============================================================================
+
+
+
 
 describe('authorFieldSchema', () => {
   it('accepts author reference objects', () => {
@@ -255,9 +255,9 @@ describe('authorFieldSchema', () => {
   });
 });
 
-// ============================================================================
-// paginationSchema Tests
-// ============================================================================
+
+
+
 
 describe('paginationSchema', () => {
   it('accepts valid pagination params', () => {
@@ -293,9 +293,9 @@ describe('paginationSchema', () => {
   });
 });
 
-// ============================================================================
-// paginatedResponseSchema Tests
-// ============================================================================
+
+
+
 
 describe('paginatedResponseSchema', () => {
   it('wraps item schema correctly', () => {
@@ -323,9 +323,9 @@ describe('paginatedResponseSchema', () => {
   });
 });
 
-// ============================================================================
-// dateRangeSchema Tests
-// ============================================================================
+
+
+
 
 describe('dateRangeSchema', () => {
   it('accepts valid date ranges', () => {
@@ -361,9 +361,9 @@ describe('dateRangeSchema', () => {
   });
 });
 
-// ============================================================================
-// searchQuerySchema Tests
-// ============================================================================
+
+
+
 
 describe('searchQuerySchema', () => {
   it('accepts valid search queries', () => {
@@ -393,9 +393,9 @@ describe('searchQuerySchema', () => {
   });
 });
 
-// ============================================================================
-// socialLinksSchema Tests
-// ============================================================================
+
+
+
 
 describe('socialLinksSchema', () => {
   it('accepts valid social links', () => {
@@ -412,9 +412,9 @@ describe('socialLinksSchema', () => {
   });
 });
 
-// ============================================================================
-// contactSchema Tests
-// ============================================================================
+
+
+
 
 describe('contactSchema', () => {
   it('accepts valid contact form data', () => {
@@ -475,9 +475,9 @@ describe('contactSchema', () => {
   });
 });
 
-// ============================================================================
-// idSchema Tests
-// ============================================================================
+
+
+
 
 describe('idSchema', () => {
   it('accepts non-empty strings', () => {
@@ -493,9 +493,9 @@ describe('idSchema', () => {
   });
 });
 
-// ============================================================================
-// toggleStatusSchema Tests
-// ============================================================================
+
+
+
 
 describe('toggleStatusSchema', () => {
   it('accepts valid toggle requests', () => {
@@ -514,9 +514,9 @@ describe('toggleStatusSchema', () => {
   });
 });
 
-// ============================================================================
-// deleteActionSchema Tests
-// ============================================================================
+
+
+
 
 describe('deleteActionSchema', () => {
   it('accepts valid delete requests', () => {

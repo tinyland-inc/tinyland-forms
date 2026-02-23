@@ -1,19 +1,19 @@
-/**
- * Field Validator Tests + Property-Based Testing
- *
- * Tests for:
- *   - emailSchema: valid emails pass, invalid emails fail
- *   - urlSchema: valid URLs pass, invalid URLs fail
- *   - slugSchema: lowercase alphanumeric + hyphens only
- *   - handleSchema: 3-20 chars, lowercase + underscores + hyphens
- *   - usernameSchema: 3-20 chars, lowercase + underscores
- *   - strongPasswordSchema: 12+ chars with all character classes
- *   - totpCodeSchema: exactly 6 digits
- *   - titleSchema, excerptSchema, contentBodySchema
- *   - iso8601DateSchema, timezoneSchema, rruleSchema
- *   - seoTitleSchema, seoDescriptionSchema
- *   - PBT: valid inputs always pass, invalid inputs always fail
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import { describe, it, expect } from 'vitest';
 import { test as fcTest } from '@fast-check/vitest';
@@ -37,9 +37,9 @@ import {
   seoDescriptionSchema,
 } from '../src/fields.js';
 
-// ============================================================================
-// Arbitraries for PBT
-// ============================================================================
+
+
+
 
 const SLUG_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789-';
 const validSlugArb = fc
@@ -64,9 +64,9 @@ const validTotpArb = fc
   .array(fc.constantFrom(...DIGIT_CHARS.split('')), { minLength: 6, maxLength: 6 })
   .map((arr) => arr.join(''));
 
-// ============================================================================
-// emailSchema Tests
-// ============================================================================
+
+
+
 
 describe('emailSchema', () => {
   it('accepts valid email addresses', () => {
@@ -94,14 +94,14 @@ describe('emailSchema', () => {
   });
 
   it('rejects emails exceeding 254 characters', () => {
-    const longEmail = 'a'.repeat(243) + '@example.com'; // 255 chars
+    const longEmail = 'a'.repeat(243) + '@example.com'; 
     expect(emailSchema.safeParse(longEmail).success).toBe(false);
   });
 });
 
-// ============================================================================
-// urlSchema Tests
-// ============================================================================
+
+
+
 
 describe('urlSchema', () => {
   it('accepts valid URLs', () => {
@@ -132,9 +132,9 @@ describe('urlSchema', () => {
   });
 });
 
-// ============================================================================
-// slugSchema Tests
-// ============================================================================
+
+
+
 
 describe('slugSchema', () => {
   it('accepts valid slugs', () => {
@@ -153,10 +153,10 @@ describe('slugSchema', () => {
   it('rejects invalid slugs', () => {
     const invalidSlugs = [
       '',
-      'Hello-World', // uppercase
-      'hello world', // spaces
-      'hello_world', // underscores
-      'hello!world', // special chars
+      'Hello-World', 
+      'hello world', 
+      'hello_world', 
+      'hello!world', 
     ];
     for (const slug of invalidSlugs) {
       expect(slugSchema.safeParse(slug).success).toBe(false);
@@ -173,9 +173,9 @@ describe('slugSchema', () => {
   });
 });
 
-// ============================================================================
-// handleSchema Tests
-// ============================================================================
+
+
+
 
 describe('handleSchema', () => {
   it('accepts valid handles', () => {
@@ -207,9 +207,9 @@ describe('handleSchema', () => {
   });
 });
 
-// ============================================================================
-// usernameSchema Tests
-// ============================================================================
+
+
+
 
 describe('usernameSchema', () => {
   it('accepts valid usernames', () => {
@@ -228,9 +228,9 @@ describe('usernameSchema', () => {
   });
 });
 
-// ============================================================================
-// strongPasswordSchema Tests
-// ============================================================================
+
+
+
 
 describe('strongPasswordSchema', () => {
   it('accepts strong passwords', () => {
@@ -263,9 +263,9 @@ describe('strongPasswordSchema', () => {
   });
 });
 
-// ============================================================================
-// basicPasswordSchema Tests
-// ============================================================================
+
+
+
 
 describe('basicPasswordSchema', () => {
   it('accepts basic passwords meeting minimum requirements', () => {
@@ -278,9 +278,9 @@ describe('basicPasswordSchema', () => {
   });
 });
 
-// ============================================================================
-// totpCodeSchema Tests
-// ============================================================================
+
+
+
 
 describe('totpCodeSchema', () => {
   it('accepts valid 6-digit codes', () => {
@@ -311,9 +311,9 @@ describe('totpCodeSchema', () => {
   );
 });
 
-// ============================================================================
-// titleSchema Tests
-// ============================================================================
+
+
+
 
 describe('titleSchema', () => {
   it('accepts valid titles', () => {
@@ -331,9 +331,9 @@ describe('titleSchema', () => {
   });
 });
 
-// ============================================================================
-// excerptSchema Tests
-// ============================================================================
+
+
+
 
 describe('excerptSchema', () => {
   it('accepts valid excerpts', () => {
@@ -346,9 +346,9 @@ describe('excerptSchema', () => {
   });
 });
 
-// ============================================================================
-// contentBodySchema Tests
-// ============================================================================
+
+
+
 
 describe('contentBodySchema', () => {
   it('accepts valid content', () => {
@@ -364,9 +364,9 @@ describe('contentBodySchema', () => {
   });
 });
 
-// ============================================================================
-// iso8601DateSchema Tests
-// ============================================================================
+
+
+
 
 describe('iso8601DateSchema', () => {
   it('accepts valid ISO 8601 dates', () => {
@@ -384,7 +384,7 @@ describe('iso8601DateSchema', () => {
   it('rejects invalid date strings', () => {
     const invalidDates = [
       'not-a-date',
-      '2026-13-01', // month 13
+      '2026-13-01', 
       '',
     ];
     for (const date of invalidDates) {
@@ -393,9 +393,9 @@ describe('iso8601DateSchema', () => {
   });
 });
 
-// ============================================================================
-// timezoneSchema Tests
-// ============================================================================
+
+
+
 
 describe('timezoneSchema', () => {
   it('accepts valid IANA timezone identifiers', () => {
@@ -417,9 +417,9 @@ describe('timezoneSchema', () => {
   });
 });
 
-// ============================================================================
-// rruleSchema Tests
-// ============================================================================
+
+
+
 
 describe('rruleSchema', () => {
   it('accepts valid RRULE strings', () => {
@@ -441,9 +441,9 @@ describe('rruleSchema', () => {
   });
 });
 
-// ============================================================================
-// SEO Schema Tests
-// ============================================================================
+
+
+
 
 describe('seoTitleSchema', () => {
   it('accepts titles within 70 chars', () => {

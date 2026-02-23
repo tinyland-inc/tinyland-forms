@@ -1,19 +1,19 @@
-/**
- * Helper Utilities Tests + Property-Based Testing
- *
- * Tests for:
- *   - slugify: converts strings to URL-friendly slugs
- *   - parseCommaSeparated: splits and trims comma-separated values
- *   - calculateReadingTime: estimates reading time from word count
- *   - validatePasswordStrength: evaluates password complexity
- *   - formatTotpCode: strips spaces and hyphens from TOTP codes
- *   - isValidHandle: validates handle format
- *   - sanitizeUsername: normalizes username input
- *   - isValidSlug: validates slug format
- *   - isValidEmail: basic email format check
- *   - validatePasswordMatch: compares passwords with normalization
- *   - PBT: deterministic outputs, edge cases
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import { describe, it, expect } from 'vitest';
 import { test as fcTest } from '@fast-check/vitest';
@@ -31,9 +31,9 @@ import {
   validatePasswordMatch,
 } from '../src/helpers.js';
 
-// ============================================================================
-// slugify Tests
-// ============================================================================
+
+
+
 
 describe('slugify', () => {
   it('converts to lowercase', () => {
@@ -81,9 +81,9 @@ describe('slugify', () => {
   });
 });
 
-// ============================================================================
-// parseCommaSeparated Tests
-// ============================================================================
+
+
+
 
 describe('parseCommaSeparated', () => {
   it('parses comma-separated values', () => {
@@ -112,9 +112,9 @@ describe('parseCommaSeparated', () => {
   });
 });
 
-// ============================================================================
-// calculateReadingTime Tests
-// ============================================================================
+
+
+
 
 describe('calculateReadingTime', () => {
   it('returns 1 for empty content', () => {
@@ -145,9 +145,9 @@ describe('calculateReadingTime', () => {
   });
 });
 
-// ============================================================================
-// validatePasswordStrength Tests
-// ============================================================================
+
+
+
 
 describe('validatePasswordStrength', () => {
   it('returns full score for strong password', () => {
@@ -205,9 +205,9 @@ describe('validatePasswordStrength', () => {
   });
 });
 
-// ============================================================================
-// formatTotpCode Tests
-// ============================================================================
+
+
+
 
 describe('formatTotpCode', () => {
   it('removes spaces', () => {
@@ -232,9 +232,9 @@ describe('formatTotpCode', () => {
   });
 });
 
-// ============================================================================
-// isValidHandle Tests
-// ============================================================================
+
+
+
 
 describe('isValidHandle', () => {
   it('accepts valid handles', () => {
@@ -262,9 +262,9 @@ describe('isValidHandle', () => {
   });
 });
 
-// ============================================================================
-// sanitizeUsername Tests
-// ============================================================================
+
+
+
 
 describe('sanitizeUsername', () => {
   it('converts to lowercase', () => {
@@ -290,9 +290,9 @@ describe('sanitizeUsername', () => {
   });
 });
 
-// ============================================================================
-// isValidSlug Tests
-// ============================================================================
+
+
+
 
 describe('isValidSlug', () => {
   it('accepts valid slugs', () => {
@@ -318,9 +318,9 @@ describe('isValidSlug', () => {
   });
 });
 
-// ============================================================================
-// isValidEmail Tests
-// ============================================================================
+
+
+
 
 describe('isValidEmail', () => {
   it('accepts valid emails', () => {
@@ -341,9 +341,9 @@ describe('isValidEmail', () => {
   });
 });
 
-// ============================================================================
-// validatePasswordMatch Tests
-// ============================================================================
+
+
+
 
 describe('validatePasswordMatch', () => {
   it('returns true for matching passwords', () => {
@@ -368,14 +368,14 @@ describe('validatePasswordMatch', () => {
   });
 });
 
-// ============================================================================
-// Unicode Edge Cases (Cross-cutting)
-// ============================================================================
+
+
+
 
 describe('Unicode edge cases', () => {
   it('slugify handles unicode characters', () => {
     expect(slugify('cafe')).toBe('cafe');
-    // Accented characters are stripped (non-ASCII)
+    
     const result = slugify('hello world');
     expect(result).toMatch(/^[a-z0-9-]*$/);
   });
@@ -394,9 +394,9 @@ describe('Unicode edge cases', () => {
   });
 });
 
-// ============================================================================
-// Extremely Long Input Edge Cases
-// ============================================================================
+
+
+
 
 describe('Extremely long inputs', () => {
   it('slugify handles very long strings', () => {
