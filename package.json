@@ -1,6 +1,6 @@
 {
   "name": "@tummycrypt/tinyland-forms",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Reusable Zod schemas, field validators, and SuperForms integration helpers for the Tinyland platform",
   "type": "module",
   "main": "./dist/index.js",
@@ -20,10 +20,11 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run build",
-    "test": "vitest",
+    "prepublishOnly": "pnpm build && pnpm check:package",
+    "test": "vitest run",
     "test:coverage": "vitest --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:package": "publint"
   },
   "keywords": [
     "zod",
@@ -37,8 +38,7 @@
   "license": "Zlib AND LicenseRef-Tinyland-Proprietary",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tinyland-inc/tinyland.dev",
-    "directory": "packages/tinyland-forms"
+    "url": "git+https://github.com/tinyland-inc/tinyland-forms.git"
   },
   "dependencies": {
     "zod": "^4.2.1"
@@ -48,7 +48,8 @@
     "@types/node": "^20.0.0",
     "fast-check": "^4.3.0",
     "typescript": "^5.0.0",
-    "vitest": "^4.0.0"
+    "vitest": "^4.0.0",
+    "publint": "^0.3.18"
   },
   "peerDependencies": {
     "sveltekit-superforms": "^2.0.0"
@@ -63,7 +64,11 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
-    "access": "public",
-    "provenance": true
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "homepage": "https://github.com/tinyland-inc/tinyland-forms",
+  "bugs": {
+    "url": "https://github.com/tinyland-inc/tinyland-forms/issues"
   }
 }
