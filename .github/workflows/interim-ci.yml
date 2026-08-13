@@ -1,0 +1,188 @@
+# =============================================================================
+# interim-ci — OPT-IN pilot lane on interim CI capacity.
+#
+# NOTHING CHANGES BY DEFAULT. This workflow cannot run on a normal push or a
+# normal pull_request. It runs only when a human either:
+#   - adds the `interim-ci` label to a PR, or
+#   - fires it manually via workflow_dispatch.
+# The existing `CI` workflow (ci.yml) is untouched and remains the gate.
+#
+# -----------------------------------------------------------------------------
+# WHY THIS REPO IS THE PILOT
+# -----------------------------------------------------------------------------
+# Measured starvation, not slowness. Between 2026-07-30 and 08-13 two jobs in
+# this repo were created, never assigned a `tinyland-nix` runner, and were
+# cancelled by GitHub at the 24-hour ceiling having executed for zero seconds.
+#
+#   run 31553456365 (dependabot/npm_and_yarn/nanoid-3.3.18)
+#     package / resolve-runner   ubuntu-latest    ok in 4s
+#     package / validate (22)    tinyland-nix     created 2026-08-12T01:23:58Z
+#                                                 cancelled 2026-08-13T01:23:58Z
+#
+# GitHub reports started_at == created_at for a job that is never picked up,
+# so this reads as "0s queued" in every queue-time metric. It is invisible
+# unless you look for jobs that died at exactly 86,400s.
+#
+# This repo is also the safest possible pilot:
+#   - public       -> ubuntu-latest minutes are FREE. Marginal cost $0.
+#   - leaf package -> no client or production surface.
+#   - MODULE.bazel -> every bazel_dep is a public BCR module. No private
+#                     registry token is required to build it. That is what
+#                     makes step 1 below possible with zero credentials.
+#   - ci.yml has npm_publish_mode: disabled and dry_run: true, so no publish
+#     side effect exists to disturb.
+#
+# -----------------------------------------------------------------------------
+# DESIGN: capacity first, cache second
+# -----------------------------------------------------------------------------
+# These are two separable claims and this lane proves them in order:
+#
+#   1. CAPACITY  — can this package build at all on hosted capacity, promptly,
+#                  instead of starving for 24h? Needs NO credentials.
+#   2. CACHE     — is BuildBuddy then faster? Needs the BUILDBUDDY_API_KEY
+#                  operator ceremony.
+#
+# So an unarmed BuildBuddy seam is NOT a failure here. With no key the lane
+# runs cache-less and still answers (1), which is the question that actually
+# motivated the project. The key only ever accelerates.
+#
+# This is deliberately the opposite of the GF cache-attachment contract's
+# fail-closed stance, and the difference is principled: that contract exists
+# to prove *cluster attachment*, where a missing substrate must never degrade
+# silently. Here the substrate is the hosted runner itself, already proven by
+# the job running at all; the cache is an optimisation. Failing closed on a
+# missing accelerant would block the capacity finding behind a credential
+# ceremony for no epistemic gain.
+#
+# NOTE: this lane deliberately does NOT invoke the GF cache-attachment
+# contract. That contract rejects ubuntu-* labels under --strict by design
+# (see interim-infra github-runners/hosted-fallback-snippet.yml, CORRECTION 2).
+#
+# Lane greens are DIAGNOSTIC. ci.yml remains landing authority.
+# =============================================================================
+
+name: interim-ci
+
+on:
+  workflow_dispatch:
+    inputs:
+      bazel_targets:
+        description: "Bazel targets to validate"
+        required: false
+        default: "//:pkg //:test"
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  # One interim run per ref; a new push supersedes rather than stacking runs.
+  group: interim-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  interim-validate:
+    # Runs ONLY on explicit opt-in. On a `labeled` event this is false for
+    # every label except `interim-ci`, so adding any other label is inert.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.label.name == 'interim-ci'
+
+    # Public repo => free. Do not swap to a larger runner without a lacing PR
+    # stating marginal cost (interim-infra docs/cost-model.md hard rule).
+    runs-on: ubuntu-latest
+    timeout-minutes: 30 # hard cost cap
+
+    env:
+      BAZEL_TARGETS: ${{ inputs.bazel_targets || '//:pkg //:test' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "10.13.1"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # --- Claim 1: capacity. No credentials involved. ---------------------
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Validate package surface
+        run: pnpm check:package
+
+      # --- Claim 2: cache. Optional accelerant. ----------------------------
+      - name: Resolve BuildBuddy seam
+        id: seam
+        env:
+          BUILDBUDDY_API_KEY: ${{ secrets.BUILDBUDDY_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -n "${BUILDBUDDY_API_KEY:-}" ]; then
+            echo "armed=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::BuildBuddy seam ARMED — Bazel will read the shared cache."
+          else
+            echo "armed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::BuildBuddy seam UNARMED — running cache-less."
+            echo "::notice::This is expected until the operator ceremony runs; the capacity claim above is unaffected."
+          fi
+
+      - name: Validate Bazel targets
+        env:
+          # Consumed ONLY by tools/buildbuddy-credential-helper.sh, which emits
+          # it as a request header. It is never interpolated into a flag, a URL,
+          # or an rc file — argv and rc files leak into process listings, the
+          # Bazel command log, and the BES stream.
+          BUILDBUDDY_API_KEY: ${{ secrets.BUILDBUDDY_API_KEY }}
+          SEAM_ARMED: ${{ steps.seam.outputs.armed }}
+        run: |
+          set -euo pipefail
+          read -r -a targets <<< "$BAZEL_TARGETS"
+
+          flags=(--verbose_failures)
+          if [ "$SEAM_ARMED" = "true" ]; then
+            # Read-only: this lane never writes to the shared cache. Writer
+            # lanes are a separate, deliberate promotion.
+            flags+=(
+              --credential_helper=remote.buildbuddy.io=%workspace%/tools/buildbuddy-credential-helper.sh
+              --remote_cache=grpcs://remote.buildbuddy.io
+              --remote_timeout=3600
+              --remote_cache_compression
+              --noremote_upload_local_results
+              # A cache outage must not fail the capacity claim.
+              --remote_local_fallback
+            )
+          fi
+
+          npx --yes @bazel/bazelisk build "${targets[@]}" "${flags[@]}"
+
+      - name: Summary
+        if: always()
+        env:
+          SEAM_ARMED: ${{ steps.seam.outputs.armed }}
+        run: |
+          {
+            echo "### interim-ci (diagnostic lane)"
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Runner | \`ubuntu-latest\` (hosted, free — public repo) |"
+            echo "| BuildBuddy cache | \`${SEAM_ARMED}\` |"
+            echo "| Marginal cost | \$0 |"
+            echo
+            echo "Landing authority remains \`ci.yml\`. This lane is diagnostic."
+          } >> "$GITHUB_STEP_SUMMARY"
