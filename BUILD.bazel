@@ -58,7 +58,7 @@ npm_package(
         ":tinyland_forms",
     ],
     package = "@tummycrypt/tinyland-forms",
-    version = "0.2.2",
+    version = "0.2.4",
     visibility = ["//visibility:public"],
 )
 
